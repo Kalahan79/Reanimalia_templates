@@ -1,61 +1,39 @@
-const puppeteer = require('puppeteer');
+name: Capture Reels Templates
 
-(async () => {
-  try {
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      headless: true
-    });
-    const page = await browser.newPage();
+on:
+  push:
+    branches:
+      - main
 
-    // Aumentar tiempo de espera de navegación
-    await page.setDefaultNavigationTimeout(60000);
+jobs:
+  build-and-capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    console.log('Navegando a la URL...');
-    await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/', {
-      waitUntil: 'networkidle0'
-    });
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-    // Obtener todos los elementos de la página
-    const elements = await page.evaluate(() => {
-      return Array.from(document.querySelectorAll('*')).map(el => el.className);
-    });
+      - name: Install Puppeteer
+        run: npm install puppeteer
 
-    console.log('Clases de elementos encontrados:', elements);
-
-    // Intentar capturar pantalla de toda la página si los selectores fallan
-    await page.screenshot({ path: 'pagina_completa.png' });
-
-    // Verificar si los elementos existen
-    const checkTemplate = async (selector) => {
-      const element = await page.$(selector);
-      console.log(`Elemento ${selector} encontrado:`, !!element);
-      return element;
-    };
-
-    await checkTemplate('.template1');
-    await checkTemplate('.template2');
-    await checkTemplate('.template3');
-
-    // Si llegamos aquí, intentamos capturar las capturas de pantalla
-    const template1 = await page.$('.template1');
-    if (template1) {
-      await template1.screenshot({ path: 'template1.png' });
-    }
-
-    const template2 = await page.$('.template2');
-    if (template2) {
-      await template2.screenshot({ path: 'template2.png' });
-    }
-
-    const template3 = await page.$('.template3');
-    if (template3) {
-      await template3.screenshot({ path: 'template3.png' });
-    }
-
-    await browser.close();
-  } catch (error) {
-    console.error('Error detallado:', error);
-    process.exit(1);
-  }
-})();
+      - name: Capture Screenshots
+        run: |
+          node <<'EOF'
+          const puppeteer = require('puppeteer');
+          (async () => {
+            const browser = await puppeteer.launch({args: ['--no-sandbox']});
+            const page = await browser.newPage();
+            await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/');
+            const template1 = await page.$('.template1');
+            await template1.screenshot({ path: 'template1.png' });
+            const template2 = await page.$('.template2');
+            await template2.screenshot({ path: 'template2.png' });
+            const template3 = await page.$('.template3');
+            await template3.screenshot({ path: 'template3.png' });
+            await browser.close();
+          })();
+          EOF
