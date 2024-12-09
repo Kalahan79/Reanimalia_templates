@@ -36,4 +36,4 @@ jobs:
             await template3.screenshot({ path: 'template3.png' });
             await browser.close();
           })();
-EOF
+          EOF
