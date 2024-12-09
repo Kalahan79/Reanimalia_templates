@@ -4,17 +4,20 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   build-and-capture:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout de código
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Configurar Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
 
       - name: Instalar Dependencias
         run: |
@@ -52,7 +55,8 @@ jobs:
           EOF
 
       - name: Subir Capturas de Pantalla
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: capturas-de-plantillas
           path: '*.png'
+          retention-days: 5
