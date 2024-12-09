@@ -1,6 +1,28 @@
-- name: Capture Screenshots
-  run: |
-    node <<EOF
+name: Capture Reels Templates
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Puppeteer
+        run: npm install puppeteer
+
+      - name: Capture Screenshots
+        run: |
+          node <<EOF
 const puppeteer = require('puppeteer');
 (async () => {
   const browser = await puppeteer.launch({args: ['--no-sandbox']});
