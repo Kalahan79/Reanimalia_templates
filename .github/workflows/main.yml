@@ -22,18 +22,18 @@ jobs:
 
       - name: Capture Screenshots
         run: |
-          node <<EOF
-          const puppeteer = require('puppeteer');
-          (async () => {
-            const browser = await puppeteer.launch({args: ['--no-sandbox']});
-            const page = await browser.newPage();
-            await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/');
-            const template1 = await page.$('.template1');
-            await template1.screenshot({ path: 'template1.png' });
-            const template2 = await page.$('.template2');
-            await template2.screenshot({ path: 'template2.png' });
-            const template3 = await page.$('.template3');
-            await template3.screenshot({ path: 'template3.png' });
-            await browser.close();
-          })();
-          EOF
+          node <<'EOF'
+const puppeteer = require('puppeteer');
+(async () => {
+  const browser = await puppeteer.launch({args: ['--no-sandbox']});
+  const page = await browser.newPage();
+  await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/');
+  const template1 = await page.$('.template1');
+  await template1.screenshot({ path: 'template1.png' });
+  const template2 = await page.$('.template2');
+  await template2.screenshot({ path: 'template2.png' });
+  const template3 = await page.$('.template3');
+  await template3.screenshot({ path: 'template3.png' });
+  await browser.close();
+})();
+EOF
