@@ -1,5 +1,4 @@
-name: Capture Reels Templates
-
+name: Capturar Plantillas de Reels
 on:
   push:
     branches:
@@ -9,31 +8,51 @@ jobs:
   build-and-capture:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout de código
         uses: actions/checkout@v2
 
-      - name: Setup Node
+      - name: Configurar Node
         uses: actions/setup-node@v2
         with:
           node-version: '16'
 
-      - name: Install Puppeteer
-        run: npm install puppeteer
+      - name: Instalar Dependencias
+        run: |
+          npm init -y
+          npm install puppeteer
 
-      - name: Capture Screenshots
+      - name: Capturar Capturas de Pantalla
         run: |
           node <<'EOF'
           const puppeteer = require('puppeteer');
+          
           (async () => {
-            const browser = await puppeteer.launch({args: ['--no-sandbox']});
-            const page = await browser.newPage();
-            await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/');
-            const template1 = await page.$('.template1');
-            await template1.screenshot({ path: 'template1.png' });
-            const template2 = await page.$('.template2');
-            await template2.screenshot({ path: 'template2.png' });
-            const template3 = await page.$('.template3');
-            await template3.screenshot({ path: 'template3.png' });
-            await browser.close();
+            try {
+              const browser = await puppeteer.launch({
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+              });
+              const page = await browser.newPage();
+              await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/');
+              
+              const template1 = await page.$('.template1');
+              await template1.screenshot({ path: 'template1.png' });
+              
+              const template2 = await page.$('.template2');
+              await template2.screenshot({ path: 'template2.png' });
+              
+              const template3 = await page.$('.template3');
+              await template3.screenshot({ path: 'template3.png' });
+              
+              await browser.close();
+            } catch (error) {
+              console.error('Captura de pantalla fallida:', error);
+              process.exit(1);
+            }
           })();
           EOF
+
+      - name: Subir Capturas de Pantalla
+        uses: actions/upload-artifact@v2
+        with:
+          name: capturas-de-plantillas
+          path: '*.png'
