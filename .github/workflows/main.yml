@@ -28,7 +28,7 @@ jobs:
           (async () => {
             const browser = await puppeteer.launch({args: ['--no-sandbox']});
             const page = await browser.newPage();
-            await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/;
+            await page.goto('https://reanimalia-templates-i2uvtab9n-kalahan79s-projects.vercel.app/');
 
             const template1 = await page.$('.template1');
             await template1.screenshot({ path: 'template1.png' });
